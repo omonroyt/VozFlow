@@ -1,0 +1,481 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  color: var(--cuarzo);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+svg .fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+.stage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: 14px;
+}
+
+/* ------------------------------------------------------------------ */
+/* La piedra                                                           */
+/* ------------------------------------------------------------------ */
+.pill {
+  --w: 46px;
+  --h: 12px;
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  border-radius: 999px;
+  background:
+    radial-gradient(120% 140% at 50% -40%, rgba(255, 255, 255, 0.09), transparent 55%),
+    linear-gradient(180deg, var(--obsidiana-alta) 0%, var(--obsidiana) 55%, var(--obsidiana-honda) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 10px 28px -6px rgba(0, 0, 0, 0.55),
+    0 2px 6px rgba(0, 0, 0, 0.35);
+  transition:
+    width 360ms var(--ease-spring),
+    height 360ms var(--ease-spring),
+    opacity 200ms var(--ease);
+  overflow: hidden;
+}
+
+.pill[data-state='idle'] {
+  opacity: 0.92;
+}
+.pill[data-state='idle'].is-hidden {
+  opacity: 0;
+}
+.pill[data-state='idle'].is-open {
+  --w: 262px;
+  --h: 44px;
+  opacity: 1;
+}
+.pill[data-state='recording'] {
+  --w: 300px;
+  --h: 44px;
+}
+.pill[data-state='processing'],
+.pill[data-state='pasting'],
+.pill[data-state='suggesting'] {
+  --w: 252px;
+  --h: 44px;
+}
+.pill[data-state='done'] {
+  --w: 128px;
+  --h: 38px;
+}
+.pill[data-state='error'] {
+  --w: var(--error-w, 320px);
+  --h: 44px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Capas                                                               */
+/* ------------------------------------------------------------------ */
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms var(--ease);
+  white-space: nowrap;
+}
+
+.pill.is-open[data-state='idle'] .layer-idle,
+.pill[data-state='recording'] .layer-live,
+.pill[data-state='processing'] .layer-live,
+.pill[data-state='pasting'] .layer-live,
+.pill[data-state='suggesting'] .layer-live,
+.pill[data-state='done'] .layer-status,
+.pill[data-state='error'] .layer-status {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 90ms;
+}
+
+/* Reposo abierto */
+.layer-idle {
+  padding: 0 6px;
+  gap: 2px;
+}
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 13px 0 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 520;
+  letter-spacing: 0.005em;
+  color: var(--cuarzo);
+  transition: background 140ms var(--ease);
+}
+.chip svg {
+  color: var(--acento);
+}
+.chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+.chip:active {
+  background: rgba(255, 255, 255, 0.11);
+}
+.divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--ceniza);
+  transition:
+    background 140ms var(--ease),
+    color 140ms var(--ease);
+}
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--cuarzo);
+}
+.icon-btn-sm {
+  width: 28px;
+  height: 28px;
+}
+.icon-btn-sm svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Grabando / procesando */
+.layer-live {
+  padding: 0 8px 0 8px;
+  gap: 8px;
+}
+.mode-tag {
+  font-size: 12px;
+  font-weight: 560;
+  padding: 3px 8px 3px 8px;
+  border-radius: 999px;
+  color: var(--acento);
+  background: rgba(var(--acento-rgb), 0.12);
+}
+#wave {
+  width: 112px;
+  height: 28px;
+  flex: none;
+}
+.label {
+  display: none;
+  font-size: 13px;
+  font-weight: 480;
+  color: var(--cuarzo);
+}
+.timer {
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ceniza);
+  min-width: 30px;
+  text-align: right;
+}
+.stop {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  transition: transform 140ms var(--ease);
+}
+.stop span {
+  width: 9px;
+  height: 9px;
+  border-radius: 2.5px;
+  background: var(--obsidiana);
+}
+.stop:hover {
+  transform: scale(1.08);
+}
+
+.pill[data-state='processing'] .layer-live,
+.pill[data-state='pasting'] .layer-live,
+.pill[data-state='suggesting'] .layer-live {
+  padding-left: 14px;
+  gap: 10px;
+}
+.pill[data-state='processing'] #wave,
+.pill[data-state='pasting'] #wave,
+.pill[data-state='suggesting'] #wave {
+  width: 56px;
+}
+.pill[data-state='processing'] .label,
+.pill[data-state='pasting'] .label,
+.pill[data-state='suggesting'] .label {
+  display: inline;
+}
+.pill[data-state='processing'] [data-act='cancel'],
+.pill[data-state='pasting'] [data-act='cancel'],
+.pill[data-state='suggesting'] [data-act='cancel'],
+.pill[data-state='processing'] .timer,
+.pill[data-state='pasting'] .timer,
+.pill[data-state='suggesting'] .timer,
+.pill[data-state='processing'] .stop,
+.pill[data-state='pasting'] .stop,
+.pill[data-state='suggesting'] .stop,
+.pill[data-state='processing'] .mode-tag,
+.pill[data-state='pasting'] .mode-tag,
+.pill[data-state='suggesting'] .mode-tag {
+  display: none;
+}
+
+/* Estado final */
+.layer-status {
+  justify-content: center;
+  gap: 9px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 520;
+}
+.status-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.pill[data-state='done'] .status-icon {
+  background: var(--acento);
+  color: var(--obsidiana);
+}
+.pill[data-state='done'] .status-icon::after {
+  content: '';
+  width: 8px;
+  height: 4.5px;
+  margin-top: -2px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+}
+.pill[data-state='error'] .status-icon {
+  background: rgba(240, 138, 126, 0.16);
+  color: var(--brasa);
+}
+.pill[data-state='error'] .status-icon::after {
+  content: '!';
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1;
+}
+.status-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.status-action {
+  display: none;
+  margin-left: auto;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 560;
+  background: rgba(255, 255, 255, 0.09);
+}
+.status-action:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.pill.has-action .status-action {
+  display: inline-block;
+}
+.pill.has-action .layer-status {
+  justify-content: flex-start;
+  padding-right: 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Pista de manos libres y atajos                                      */
+/* ------------------------------------------------------------------ */
+.hint {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cuarzo);
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(18, 17, 22, 0.88);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 180ms var(--ease),
+    transform 220ms var(--ease);
+}
+.hint.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tarjeta de sugerencias del modo prompt                              */
+/* ------------------------------------------------------------------ */
+.card {
+  position: relative;
+  width: 360px;
+  padding: 16px 16px 18px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--obsidiana-alta) 0%, var(--obsidiana) 60%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 18px 40px -10px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  transition:
+    opacity 200ms var(--ease),
+    transform 320ms var(--ease-spring);
+}
+.card.is-visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.card-title {
+  font-size: 14.5px;
+  font-weight: 520;
+  line-height: 1.4;
+  color: var(--cuarzo);
+}
+.card-title b {
+  font-weight: 650;
+  color: var(--acento);
+}
+.card-sub {
+  margin-top: 4px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ceniza);
+}
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.btn-primary,
+.btn-ghost {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    background 140ms var(--ease),
+    transform 140ms var(--ease);
+}
+.btn-primary {
+  background: var(--acento);
+  color: var(--acento-tinta);
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+.btn-ghost {
+  color: var(--cuarzo);
+  background: rgba(255, 255, 255, 0.07);
+}
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.btn-primary:active,
+.btn-ghost:active {
+  transform: scale(0.97);
+}
+.countdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+}
+.countdown span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--acento);
+  transform-origin: left;
+  opacity: 0.7;
+}
+
+/* Tooltip de atajo sobre los chips */
+.tip {
+  position: fixed;
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 520;
+  color: var(--cuarzo);
+  background: rgba(18, 17, 22, 0.94);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition:
+    opacity 140ms var(--ease),
+    transform 160ms var(--ease);
+}
+.tip.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill,
+  .card,
+  .hint,
+  .layer {
+    transition-duration: 1ms !important;
+  }
+}

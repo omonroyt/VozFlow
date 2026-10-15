@@ -1,0 +1,12 @@
+# Repos de otros proyectos que solo usamos como referencia
+referencias/
+
+# Dependencias y compilados (se regeneran con npm install / crear-instalador.bat)
+node_modules/
+dist/
+
+# Por si algún día se usa un archivo de entorno con la key
+.env
+.env.*
+
+*.log

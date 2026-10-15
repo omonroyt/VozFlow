@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; img-src 'self' data:; media-src 'self' blob: mediastream:;" />
+    <title>VozFlow</title>
+    <link rel="stylesheet" href="../shared/tokens.css" />
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <div class="titlebar"></div>
+    <div class="shell">
+      <aside class="side">
+        <div class="brand">
+          <img src="../../../assets/icon.png" alt="" width="28" height="28" />
+          <span>VozFlow</span>
+        </div>
+        <nav class="nav" id="nav">
+          <a href="#inicio" data-page="inicio">
+            <svg viewBox="0 0 20 20"><path d="M3.5 9 10 3.5 16.5 9v7a.8.8 0 0 1-.8.8H12v-4.5H8v4.5H4.3a.8.8 0 0 1-.8-.8Z"/></svg>Inicio</a>
+          <a href="#conexion" data-page="conexion">
+            <svg viewBox="0 0 20 20"><circle cx="7" cy="12.5" r="3.5"/><path d="m9.5 10 6.5-6.5M13.5 6l2 2M12 7.5l1.5 1.5"/></svg>Conexión</a>
+          <a href="#atajos" data-page="atajos">
+            <svg viewBox="0 0 20 20"><rect x="2.5" y="5" width="15" height="10" rx="2"/><path d="M5.5 8h1M9.5 8h1M13.5 8h1M6 12h8"/></svg>Atajos</a>
+          <a href="#microfono" data-page="microfono">
+            <svg viewBox="0 0 20 20"><rect x="7" y="2.5" width="6" height="10" rx="3"/><path d="M4.5 9.5a5.5 5.5 0 0 0 11 0M10 15v2.5"/></svg>Micrófono</a>
+          <a href="#preferencias" data-page="preferencias">
+            <svg viewBox="0 0 20 20"><path d="M4 6h7M15 6h1M4 14h1M9 14h7"/><circle cx="13" cy="6" r="2"/><circle cx="7" cy="14" r="2"/></svg>Preferencias</a>
+          <a href="#recientes" data-page="recientes">
+            <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l2.5 2"/></svg>Recientes</a>
+        </nav>
+        <div class="side-status" id="side-status">
+          <span class="dot"></span>
+          <span class="txt">Comprobando…</span>
+        </div>
+      </aside>
+
+      <main class="main" id="main">
+        <!-- INICIO -->
+        <section class="page" id="page-inicio">
+          <header class="summary">
+            <h1 id="summary-title">Todavía no dictas nada hoy.</h1>
+            <p class="lead" id="summary-week"></p>
+          </header>
+
+          <ol class="checklist" id="checklist" hidden>
+            <li data-step="key">
+              <span class="check"></span>
+              <div>
+                <p class="step-title">Conecta tu API key de Groq</p>
+                <p class="step-desc">Es gratis y toma un minuto.</p>
+              </div>
+              <a class="btn btn-small" href="#conexion">Conectar</a>
+            </li>
+            <li data-step="mic">
+              <span class="check"></span>
+              <div>
+                <p class="step-title">Prueba tu micrófono</p>
+                <p class="step-desc">Para confirmar que VozFlow te escucha bien.</p>
+              </div>
+              <a class="btn btn-small" href="#microfono">Probar</a>
+            </li>
+            <li data-step="first">
+              <span class="check"></span>
+              <div>
+                <p class="step-title">Haz tu primer dictado</p>
+                <p class="step-desc">En cualquier app, o en la caja de prueba de Atajos.</p>
+              </div>
+              <a class="btn btn-small" href="#atajos">Probar</a>
+            </li>
+          </ol>
+
+          <section class="block">
+            <div class="block-head">
+              <h3>Plan gratuito de hoy</h3>
+              <span class="muted small">Groq renueva los límites cada día</span>
+            </div>
+            <div class="quota">
+              <div class="quota-row" id="quota-stt">
+                <div class="quota-copy">
+                  <p class="quota-title">Voz a texto</p>
+                  <p class="quota-text">Sin datos todavía hoy</p>
+                </div>
+                <div class="bar"><span></span></div>
+              </div>
+              <div class="quota-row" id="quota-llm">
+                <div class="quota-copy">
+                  <p class="quota-title">Limpieza</p>
+                  <p class="quota-text">Sin datos todavía hoy</p>
+                </div>
+                <div class="bar"><span></span></div>
+              </div>
+              <p class="quota-note" id="quota-note" hidden></p>
+            </div>
+          </section>
+
+          <section class="block">
+            <div class="block-head">
+              <h3>Tu último dictado</h3>
+              <span class="muted small" id="last-meta"></span>
+            </div>
+            <div id="last"></div>
+          </section>
+        </section>
+
+        <!-- CONEXIÓN -->
+        <section class="page" id="page-conexion">
+          <header class="page-head">
+            <h2>Conexión</h2>
+            <p class="lead">VozFlow usa el plan gratuito de Groq para transcribir y limpiar tu voz. Tu API key se guarda cifrada en esta computadora.</p>
+          </header>
+
+          <div class="group">
+            <label class="field-label" for="api-key">API key de Groq</label>
+            <div class="key-row">
+              <div class="input-wrap">
+                <input id="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="gsk_…" />
+                <button class="input-btn" id="toggle-key" type="button" aria-label="Mostrar u ocultar la key">
+                  <svg viewBox="0 0 20 20"><path d="M2.5 10s2.7-5 7.5-5 7.5 5 7.5 5-2.7 5-7.5 5-7.5-5-7.5-5Z"/><circle cx="10" cy="10" r="2.2"/></svg>
+                </button>
+              </div>
+              <button class="btn btn-primary" id="save-key">Guardar</button>
+              <button class="btn" id="test-key">Probar conexión</button>
+            </div>
+            <p class="field-msg" id="key-msg"></p>
+          </div>
+
+          <div class="group">
+            <p class="group-title">Cómo conseguirla</p>
+            <ol class="steps">
+              <li>Entra a <a href="#" data-ext="https://console.groq.com/keys">console.groq.com/keys</a> e inicia sesión. No pide tarjeta.</li>
+              <li>Crea una key nueva y cópiala. Solo se muestra una vez.</li>
+              <li>Pégala arriba y presiona Guardar.</li>
+              <li>Recomendado: en <a href="#" data-ext="https://console.groq.com/settings">Settings</a>, sección Data Controls, activa Zero Data Retention para que Groq no guarde nada.</li>
+            </ol>
+          </div>
+
+          <div class="group">
+            <p class="group-title">Modelos</p>
+            <div class="row">
+              <div class="row-copy">
+                <p class="row-title">Voz a texto</p>
+                <p class="row-desc">Turbo es más rápido. Large v3 es un poco más preciso con nombres y términos técnicos.</p>
+              </div>
+              <select id="stt-model" data-setting="sttModel">
+                <option value="whisper-large-v3-turbo">Whisper Large v3 Turbo</option>
+                <option value="whisper-large-v3">Whisper Large v3</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="row-copy">
+                <p class="row-title">Limpieza y prompts</p>
+                <p class="row-desc">Si un modelo se queda sin cuota gratuita, VozFlow pasa al siguiente. Si fallan todos, pega tu texto sin limpiar.</p>
+              </div>
+              <ol class="chain" id="chain"></ol>
+            </div>
+          </div>
+        </section>
+
+        <!-- ATAJOS -->
+        <section class="page" id="page-atajos">
+          <header class="page-head">
+            <h2>Atajos</h2>
+            <p class="lead">Mantén la combinación para hablar y suelta para pegar. Agregar Shift activa el modo prompt.</p>
+          </header>
+
+          <div class="combos" id="combos">
+            <div class="combo">
+              <div class="keys" data-combo="text"></div>
+              <div class="combo-copy">
+                <p class="combo-title">Dictado</p>
+                <p class="combo-desc">Mantén mientras hablas y suelta para pegar. Un toque rápido activa manos libres.</p>
+              </div>
+            </div>
+            <div class="combo">
+              <div class="keys" data-combo="prompt"></div>
+              <div class="combo-copy">
+                <p class="combo-title">Prompt para agentes</p>
+                <p class="combo-desc">Ordena lo que dices en rol, objetivo, contexto, requisitos y restricciones. Si falta algo, te propone completarlo.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="try">
+            <label for="try-area" class="field-label">Pruébalo aquí</label>
+            <textarea id="try-area" rows="5" placeholder="Haz clic aquí, mantén tu atajo y di algo como: “eh, este, quiero que me ayudes a, a revisar tres cosas: primero el presupuesto, segundo las fechas y tercero el equipo”."></textarea>
+            <div class="try-actions">
+              <button class="btn" data-try="text">Dictar aquí</button>
+              <button class="btn" data-try="prompt">Dictar prompt aquí</button>
+              <span class="muted small" id="try-note">Esc cancela en cualquier momento.</span>
+            </div>
+          </div>
+
+          <div class="group">
+            <p class="group-title">Elige tu atajo</p>
+            <div class="presets" id="presets"></div>
+          </div>
+          <div class="group">
+            <p class="group-title">Cómo funciona</p>
+            <dl class="howto">
+              <dt>Mantener</dt><dd>Graba mientras tienes las teclas presionadas. Al soltar, limpia y pega.</dd>
+              <dt>Toque rápido</dt><dd>Activa manos libres. Vuelve a tocar el atajo para terminar.</dd>
+              <dt>Shift</dt><dd>Agrégalo en cualquier momento de la grabación para convertirla en prompt.</dd>
+              <dt>Esc</dt><dd>Cancela la grabación sin pegar nada.</dd>
+            </dl>
+            <p class="muted small note">Si eliges Ctrl + Alt y tu teclado está en español, ten en cuenta que AltGr (para escribir @) también lo activa.</p>
+          </div>
+        </section>
+
+        <!-- MICRÓFONO -->
+        <section class="page" id="page-microfono">
+          <header class="page-head">
+            <h2>Micrófono</h2>
+            <p class="lead">VozFlow solo abre el micrófono mientras grabas.</p>
+          </header>
+          <div class="group">
+            <div class="row">
+              <div class="row-copy">
+                <p class="row-title">Dispositivo</p>
+                <p class="row-desc">Si usas audífonos con micrófono, elígelos aquí.</p>
+              </div>
+              <select id="mic" data-setting="micDeviceId"></select>
+            </div>
+            <div class="meter-block">
+              <div class="meter"><span id="meter-fill"></span></div>
+              <button class="btn" id="mic-test">Probar micrófono</button>
+            </div>
+            <p class="field-msg" id="mic-msg"></p>
+          </div>
+          <div class="group">
+            <label class="row">
+              <div class="row-copy">
+                <p class="row-title">Sonidos al grabar</p>
+                <p class="row-desc">Un tono suave al empezar y al terminar.</p>
+              </div>
+              <input type="checkbox" class="switch" data-setting="sounds" />
+            </label>
+          </div>
+        </section>
+
+        <!-- PREFERENCIAS -->
+        <section class="page" id="page-preferencias">
+          <header class="page-head">
+            <h2>Preferencias</h2>
+          </header>
+          <div class="group">
+            <div class="row">
+              <div class="row-copy">
+                <p class="row-title">Idioma de dictado</p>
+                <p class="row-desc">Español da mejores resultados. Automático sirve si alternas idiomas.</p>
+              </div>
+              <select data-setting="language">
+                <option value="es">Español</option>
+                <option value="auto">Automático</option>
+              </select>
+            </div>
+            <label class="row">
+              <div class="row-copy">
+                <p class="row-title">Limpiar el texto</p>
+                <p class="row-desc">Quita muletillas, repeticiones y autocorrecciones. Desactívalo para pegar la transcripción literal.</p>
+              </div>
+              <input type="checkbox" class="switch" data-setting="cleanup" />
+            </label>
+            <label class="row">
+              <div class="row-copy">
+                <p class="row-title">Proponer secciones faltantes</p>
+                <p class="row-desc">En modo prompt, pregunta si quieres completar rol, contexto o restricciones que no mencionaste.</p>
+              </div>
+              <input type="checkbox" class="switch" data-setting="promptSuggestions" />
+            </label>
+            <div class="row">
+              <div class="row-copy">
+                <p class="row-title">Tiempo para decidir</p>
+                <p class="row-desc">Si no respondes, se pega el prompt tal cual.</p>
+              </div>
+              <select data-setting="suggestionTimeoutSec" data-number>
+                <option value="10">10 segundos</option>
+                <option value="15">15 segundos</option>
+                <option value="20">20 segundos</option>
+                <option value="30">30 segundos</option>
+              </select>
+            </div>
+          </div>
+          <div class="group">
+            <label class="row">
+              <div class="row-copy">
+                <p class="row-title">Usar el nombre de la app activa</p>
+                <p class="row-desc">Ayuda a dar el formato correcto. Solo se envía el nombre y el título de la ventana, nunca capturas.</p>
+              </div>
+              <input type="checkbox" class="switch" data-setting="useContext" />
+            </label>
+            <label class="row">
+              <div class="row-copy">
+                <p class="row-title">Restaurar el portapapeles</p>
+                <p class="row-desc">Después de pegar, deja en el portapapeles lo que tenías antes.</p>
+              </div>
+              <input type="checkbox" class="switch" data-setting="restoreClipboard" />
+            </label>
+            <label class="row">
+              <div class="row-copy">
+                <p class="row-title">Mostrar la pastilla en reposo</p>
+                <p class="row-desc">Si la ocultas, solo aparece mientras grabas.</p>
+              </div>
+              <input type="checkbox" class="switch" data-setting="pillIdleVisible" />
+            </label>
+            <label class="row">
+              <div class="row-copy">
+                <p class="row-title">Iniciar con Windows</p>
+                <p class="row-desc">Funciona en la versión instalada de VozFlow.</p>
+              </div>
+              <input type="checkbox" class="switch" data-setting="launchAtLogin" />
+            </label>
+          </div>
+        </section>
+
+        <!-- RECIENTES -->
+        <section class="page" id="page-recientes">
+          <header class="page-head head-split">
+            <div>
+              <h2>Recientes</h2>
+              <p class="lead">Tus últimos dictados, por si el pegado no cayó donde querías.</p>
+            </div>
+            <button class="btn btn-quiet" id="clear-history">Borrar todo</button>
+          </header>
+          <ul class="history" id="history"></ul>
+        </section>
+      </main>
+    </div>
+    <script src="../../shared/diff.js"></script>
+    <script src="settings.js"></script>
+  </body>
+</html>
